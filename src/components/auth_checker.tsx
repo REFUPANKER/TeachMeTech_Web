@@ -1,31 +1,72 @@
 import { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
-import { auth } from '@/app/firebase/dbm';
+import { usePathname, useRouter } from 'next/navigation';
+import { auth, db } from '@/app/firebase/dbm';
 import { LoaderCircleIcon, Home } from 'lucide-react';
+import { doc, getDoc } from 'firebase/firestore';
+import { toast } from '@/hooks/use-toast';
 
-const AuthCheck = ({ successRedirect = "/", redirectToAuthOnFail = true }) => {
+
+
+
+
+const AuthChecker = ({ successRedirect = "/" }) => {
     const [loading, setLoading] = useState(true);
     const router = useRouter();
+    const path = usePathname()
 
     useEffect(() => {
+        const checkIsMod = async () => {
+            try {
+                const u = doc(db, "Moderators", auth.currentUser?.uid || "")
+                const gd = await getDoc(u)
+                return gd.exists()
+            } catch (error) { }
+            return false
+        }
         setLoading(true);
 
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
-                router.push(successRedirect);
-            } else if (redirectToAuthOnFail) {
+                checkIsMod().then(r => {
+                    if (r == true) {
+                        if (successRedirect != "") {
+                            router.push(successRedirect);
+                        }
+                    }else{
+                        auth.signOut()
+                        toast({
+                            title: "Access denied",
+                            description: "User not have access",
+                            style: {
+                                background: "#151515",
+                                color: "white",
+                            }
+                        })
+                    }
+                })
+            } else if (path != "/account") {
+                toast({
+                    title: "Access denied",
+                    description: "User not have access",
+                    style: {
+                        background: "#151515",
+                        color: "white",
+                    }
+                })
                 router.push("/account");
-                setLoading(false);
             }
+            setTimeout(() => {
+                setLoading(false);
+            }, 700);
         });
 
         return () => unsubscribe();
-    }, [router, successRedirect, redirectToAuthOnFail]);
+    }, [router]);
 
     return (
         loading && (
-            <div className="fixed inset-0 z-10 flex items-center justify-center bg-[#101010] m-0 p-0">
+            <div className="fixed inset-0 flex items-center justify-center bg-[#101010] m-0 p-0" style={{ zIndex: "100" }}>
                 <Home
                     className="absolute top-4 left-4 text-white cursor-pointer"
                     size={32}
@@ -40,4 +81,4 @@ const AuthCheck = ({ successRedirect = "/", redirectToAuthOnFail = true }) => {
     );
 };
 
-export default AuthCheck;
+export default AuthChecker;

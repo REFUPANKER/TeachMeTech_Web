@@ -19,33 +19,35 @@ export default function AuthPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        await signInWithEmailAndPassword(auth, email, password)
-            .then(r => {
-                toast({
-                    title: "Successfully logged in",
-                    description: "Redirecting ...",
-                    style: {
-                        background: "#151515",
-                        color: "white"
-                    }
-                })
-                setTimeout(() => {
-                    router.push("/dashboard");
-                }, 2000);
-            }).catch(e => {
-                toast({
-                    title: "Login failed",
-                    description: "Check Email or Password",
-                    style: {
-                        background: "#151515",
-                        color: "white",
-                    }
-                })
-            });
+        try {
+            await signInWithEmailAndPassword(auth, email, password)
+                .then(r => {
+                    toast({
+                        title: "Checking access",
+                        description: "loading ...",
+                        style: {
+                            background: "#151515",
+                            color: "white"
+                        }
+                    })
+                    setTimeout(() => {
+                        router.push("/dashboard");
+                    }, 2000);
+                }).catch(e => {
+                    toast({
+                        title: "Login failed",
+                        description: "Check Email or Password",
+                        style: {
+                            background: "#151515",
+                            color: "white",
+                        }
+                    })
+                });
+        } catch (error) {}
     }
     return (
         <div>
-            <AuthChecker successRedirect="/dashboard" redirectToAuthOnFail={false} />
+            <AuthChecker successRedirect="/dashboard" />
             <div className="flex items-center justify-center min-h-screen bg-[#101010]">
                 <Card className="w-full max-w-lg bg-[#101010] relative shadow-2xl shadow-[#075D17] p-6">
                     <button
