@@ -176,8 +176,8 @@ export default function DashboardLayout({ children, }: { children: React.ReactNo
                         <span className="text-xl font-bold">Teach Me Tech</span>
                     </div>
                 </header>
-                <main className="p-4 max-h-[100vh]">
-                    <div className="h-100 overflow-auto">
+                <main className="p-3">
+                    <div className="h-100 overflow-auto d-flex flex-column">
                         {children}
                     </div>
                 </main>
