@@ -12,7 +12,7 @@ export default function RootLayout({children,}: {children: React.ReactNode}) {
     <html lang="en" data-bs-theme="dark">
       <body style={{ background: "#101010" }}>
         <main>{children}</main>
-        <Toaster />
+        <Toaster/>
       </body>
     </html>
   )

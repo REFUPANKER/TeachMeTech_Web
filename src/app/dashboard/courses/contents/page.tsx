@@ -54,12 +54,12 @@ export default function contents() {
   return (
     <div className='overflow-x-hidden overflow-auto h-[80vh]'>
       <h3 className="mb-4">Listing Contents</h3>
-      {contents.length==0&&(
-          <div className='alert alert-warning d-flex gap-x-2 items-center'>
-            <i className='fas fa-warning'></i>
-            No contents existing
-          </div>
-        )}
+      {contents.length == 0 && (
+        <div className='alert alert-warning d-flex gap-x-2 items-center'>
+          <i className='fas fa-warning'></i>
+          No contents existing
+        </div>
+      )}
       <div className="row g-3">
         {contents.map((e, i) => (
           <div key={i} className="col-6 col-md-3">

@@ -22,4 +22,10 @@ const auth = getAuth(app);
 const rtdb = getDatabase(app);
 const storage = getStorage(app);
 
-export { app, db, auth, rtdb,storage };
+export function focusTo(id: string) {
+    try {
+        document.getElementById(id)?.focus()
+    } catch (error) { }
+}
+
+export { app, db, auth, rtdb, storage };

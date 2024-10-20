@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function AddCourse() {
     return (
-        <div className='w-100'>
+        <div>
             <h3>Add Course</h3>
             <Add_Course/>            
         </div>

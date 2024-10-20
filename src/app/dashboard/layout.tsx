@@ -112,7 +112,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         )}
                     </div>
                     <div className="flex flex-col items-center mb-3">
-                        {!loadingState ? (
+                        {!loadingState && userData ? (
                             <>
                                 <div
                                     className="rounded-circle h-[14vh] aspect-square text-white flex justify-center items-center"
@@ -180,8 +180,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </nav>
                 </div>
             </aside>
-            <div className="flex-1 overflow-auto">
-                <header className="bg-[#151515] p-2 md:hidden">
+            <div className="flex-1 flex-col">
+                <header className="bg-[#151515] p-2 md:hidden sticky t-0 l-0">
                     <div className="d-flex items-center space-x-2">
                         <Button variant="ghost" size="icon" onClick={toggleSidebar} className="text-white hover:bg-[#252525]">
                             <Menu className="h-6 w-6" />
@@ -190,7 +190,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </div>
                 </header>
                 <main className="p-3">
-                    <div className="max-h-[95vh] h-100 overflow-auto d-flex flex-column">
+                    <div className="h-[85vh] md:h-[90vh] overflow-auto d-flex flex-column">
                         {children}
                     </div>
                 </main>
