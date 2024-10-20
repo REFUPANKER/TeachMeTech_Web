@@ -9,7 +9,8 @@ import {
     Settings,
     LogOut,
     Menu,
-    X
+    X,
+    MessageSquareText
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -22,7 +23,7 @@ import AuthChecker from "@/components/auth_checker"
 import { doc, getDoc } from "firebase/firestore"
 import { getDownloadURL, ref } from "firebase/storage"
 
-export default function DashboardLayout({ children, }: { children: React.ReactNode }) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true)
     const [selectedItem, setSelectedItem] = useState("Dashboard")
     const [isMobile, setIsMobile] = useState(false)
@@ -37,6 +38,7 @@ export default function DashboardLayout({ children, }: { children: React.ReactNo
         { name: "Dashboard", icon: Home, path: "/dashboard" },
         { name: "Courses", icon: BookOpen, path: "/dashboard/courses" },
         { name: "Users", icon: Users, path: "/dashboard/users" },
+        { name: "Chat", icon: MessageSquareText, path: "/dashboard/chat" },
         { name: "Management", icon: Settings, path: "/dashboard/management" },
     ]
 
@@ -109,26 +111,37 @@ export default function DashboardLayout({ children, }: { children: React.ReactNo
                             </Button>
                         )}
                     </div>
-                    <div className="flex flex-col items-center mb-8">
-                        <div
-                            className="rounded-circle h-[14vh] aspect-square text-white flex justify-center items-center"
-                            style={{
-                                backgroundImage: userData.pfp ? `url(${userData.pfp})` : 'none',
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                            }}>
-                            {userData.pfp ? null : (
-                                <i className="fa-regular fa-user text-6xl"></i>
-                            )}
-                        </div>
+                    <div className="flex flex-col items-center mb-3">
+                        {!loadingState ? (
+                            <>
+                                <div
+                                    className="rounded-circle h-[14vh] aspect-square text-white flex justify-center items-center"
+                                    style={{
+                                        backgroundImage: userData.pfp ? `url(${userData.pfp})` : 'none',
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center',
+                                    }}
+                                >
+                                    {userData.pfp ? null : (
+                                        <i className="fa-regular fa-user text-6xl"></i>
+                                    )}
+                                </div>
 
+                                <span className="mt-2 text-lg font-semibold">
+                                    {userData.name}
+                                </span>
+                                <span className="mt-2 text-l ps-3 pe-3">
+                                    {userData.aboutMe}
+                                </span>
+                            </>
+                        ) : (
+                            <>
+                                <div className="rounded-circle h-[14vh] aspect-square bg-gray-300 animate-pulse"></div>
+                                <div className="mt-2 h-6 w-1/3 bg-gray-300 rounded animate-pulse"></div>
+                                <div className="mt-2 h-4 w-2/3 bg-gray-300 rounded animate-pulse"></div>
+                            </>
+                        )}
 
-                        <span className={`mt-2 text-lg font-semibold `}>
-                            {userData.name}
-                        </span>
-                        <span className={`mt-2 text-l ps-3 pe-3 `}>
-                            {userData.aboutMe}
-                        </span>
                         <div className="mt-4 flex justify-center items-center space-x-2">
                             <Button variant="ghost" >
                                 <CircleUser className="mr-2 h-4 w-4" />
@@ -177,7 +190,7 @@ export default function DashboardLayout({ children, }: { children: React.ReactNo
                     </div>
                 </header>
                 <main className="p-3">
-                    <div className="h-100 overflow-auto d-flex flex-column">
+                    <div className="max-h-[95vh] h-100 overflow-auto d-flex flex-column">
                         {children}
                     </div>
                 </main>

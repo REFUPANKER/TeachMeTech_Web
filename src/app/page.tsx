@@ -20,6 +20,7 @@ export default function Home() {
                 display: 'flex',
                 position: 'relative',
                 flexDirection: 'column',
+                fontFamily: "'Source Sans 3', sans-serif"
             }}
         >
             <div>

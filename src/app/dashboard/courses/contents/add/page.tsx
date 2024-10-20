@@ -2,11 +2,10 @@
 
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ReactPlayer from 'react-player';
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { doc, setDoc } from 'firebase/firestore';
-import { randomUUID } from 'crypto';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { db } from '@/app/firebase/dbm';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
@@ -118,6 +117,7 @@ export default function AddContent() {
 
     const [postState, setPostState] = useState(false)
 
+
     function PublishContent() {
         if (postState) {
             toast({
@@ -152,8 +152,21 @@ export default function AddContent() {
             });
             return
         }
+        toast({
+            title: "Publishing...",
+            description: "it wont take long time :)",
+            style: {
+                background: "#151515",
+                color: "white",
+            }
+        });
         setPostState(true)
-        setDoc(doc(db, "CourseContents", crypto.randomUUID() || ""), { "data": content, "title": contentTitle })
+        setDoc(doc(db, "CourseContents", crypto.randomUUID() || ""),
+            {
+                "data": content,
+                "title": contentTitle,
+                "time": serverTimestamp()
+            })
             .then(r => {
                 toast({
                     title: "Content Published",
@@ -274,6 +287,7 @@ export default function AddContent() {
                                     onChange={(e) => setEditingData({ ...editingData, size: e.target.value })}
                                     placeholder="Title size"
                                     className="w-full p-2 rounded text-white"
+                                    min={10} max={40}
                                 />
                             </>
                         )}
