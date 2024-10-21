@@ -180,20 +180,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </nav>
                 </div>
             </aside>
-            <div className="flex-1 flex-col">
-                <header className="bg-[#151515] p-2 md:hidden sticky t-0 l-0">
+            <div className="d-flex flex-col w-100 h-100 overflow-hidden">
+                <div className="bg-[#151515] p-2 md:hidden sticky top-0 left-0 m-0">
                     <div className="d-flex items-center space-x-2">
                         <Button variant="ghost" size="icon" onClick={toggleSidebar} className="text-white hover:bg-[#252525]">
                             <Menu className="h-6 w-6" />
                         </Button>
                         <span className="text-xl font-bold">Teach Me Tech</span>
                     </div>
-                </header>
-                <main className="p-3">
-                    <div className="h-[85vh] md:h-[90vh] overflow-auto d-flex flex-column">
-                        {children}
-                    </div>
-                </main>
+                </div>
+                <div className="p-3 w-100 md:h-[100vh] overflow-auto d-flex flex-column">
+                    {children}
+                </div>
             </div>
         </div>
     )

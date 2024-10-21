@@ -7,8 +7,8 @@ export default function layout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     
     return (
-        <div className='flex-1 flex-col p-0 m-0 h-100'>
-            <div className='d-flex gap-x-0 md:gap-x-3 items-center'>
+        <div className='flex-1 flex-col p-0 m-0'>
+            <div className='d-flex gap-x-0 md:gap-x-3 items-center h-fit'>
                 <Link href='/dashboard/courses' className={`${pathname === "/dashboard/courses" ? "border-b-4 border-[#08781d]" : ""} text-white text-decoration-none content-center p-2 hover:bg-[#052b0c]`}>
                     Courses
                 </Link>

@@ -1,14 +1,12 @@
 # Teach Me Tech : Web for Authors
 
+### [Warning] : reactStrictMode set to false in next.config.mjs 
 
 TODO:
 announcements page
     create
 courses 
-    display courses
+    thumbnails
     pagination
     add/edit courses
         add drag drop order switch to contents
-    contents
-        pagination
-        fix : add/edit contents (make it single component)

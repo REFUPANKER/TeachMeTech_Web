@@ -2,13 +2,12 @@
 import React, { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import Link from 'next/link'
-import { CircleXIcon, ExternalLinkIcon, PenBoxIcon } from 'lucide-react'
+import { CircleXIcon, ExternalLinkIcon } from 'lucide-react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion'
 import ReactPlayer from 'react-player'
 import { toast } from '@/hooks/use-toast'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore'
 import { db, focusTo } from '@/app/firebase/dbm'
-import { randomUUID } from 'crypto'
 import { useRouter } from 'next/navigation'
 
 export default function Add_Course({ token = "" }) {
@@ -23,33 +22,62 @@ export default function Add_Course({ token = "" }) {
     const [courseDescription, setCourseDescription] = useState("")
     const [courseCategory, setCourseCategory] = useState("")
 
+    const [inEditLoading, setInEditLoading] = useState(false)
+    const [importingContents, setImportingContents] = useState(false)
     useEffect(() => {
-        return () => {
-            if (token != "") {
-                console.log("Editing the course");
-                //TODO:handle editing course
+        const f = async () => {
+            setInEditLoading(true);
+            let error = false;
+            try {
+                const r = await getDoc(doc(db, "Courses", token))
+                if (r && r.data()) {
+                    const d = r.data();
+                    setCourseTitle(d?.title)
+                    setCourseDescription(d?.description)
+                    setCourseCategory(d?.category)
+                    d?.contents.forEach((e: any) => {
+                        TryMakeImport(e, true);
+                    })
+                    setInEditLoading(false);
+                } else {
+                    error = true;
+                }
+            } catch (e) { error = true; }
+
+            if (error) {
+                toast({
+                    title: "Can't edit content",
+                    description: "Be sure token is right",
+                    style: { background: "#151515", color: "white", }
+                });
+                setInEditLoading(false);
             }
+        }
+        if (token) {
+            f();
         }
     }, [])
 
-    async function TryMakeImport(token: any) {
+    async function TryMakeImport(token: any, directImport = false) {
         let error = false;
-        if (contentImports.length + 1 > maxContentCount) {
-            toast({
-                title: "Cant import content",
-                description: "You reached to content limit",
-                style: { background: "#151515", color: "white" }
-            });
-            return;
-        }
-        if (searchEntry.replace(" ", "").length < 1) {
-            toast({
-                title: "Fill the import input",
-                description: "import search not valid",
-                style: { background: "#151515", color: "white" }
-            });
-            setSearchEntry("")
-            return;
+        if (!directImport) {
+            if (contentImports.length + 1 > maxContentCount) {
+                toast({
+                    title: "Cant import content",
+                    description: "You reached to content limit",
+                    style: { background: "#151515", color: "white" }
+                });
+                return;
+            }
+            if (searchEntry.replace(" ", "").length < 1) {
+                toast({
+                    title: "Fill the import input",
+                    description: "import search not valid",
+                    style: { background: "#151515", color: "white" }
+                });
+                setSearchEntry("")
+                return;
+            }
         }
         setImportLoading(true);
         setSearchEntry("")
@@ -114,8 +142,8 @@ export default function Add_Course({ token = "" }) {
             style: { background: "#151515", color: "white" }
         });
         const importsTokens = contentImports.map(e => { return e.id })
-        await setDoc(doc(db, "Courses", crypto.randomUUID()), {
-            "date": Date(),
+        await setDoc(doc(db, "Courses", token ? token : crypto.randomUUID() || ""), {
+            "date": serverTimestamp(),
             "likes": 0,
             "title": courseTitle,
             "description": courseDescription,
@@ -140,6 +168,7 @@ export default function Add_Course({ token = "" }) {
 
     return (
         <div className='d-flex flex-col gap-y-4'>
+            {inEditLoading && (<div className='bg-[#252525] rounded-3 p-2 m-3 animate-pulse text-3xl'>Fetching content data ...</div>)}
             <div className='d-flex flex-col lg:flex-row gap-4'>
                 <div className='d-flex flex-col w-full'>
                     <h4>Course Properties</h4>
@@ -148,14 +177,14 @@ export default function Add_Course({ token = "" }) {
                     <h6>Description</h6>
                     <textarea id='Course_Description' value={courseDescription} onChange={e => { setCourseDescription(e.target.value) }} required placeholder='Type Description' className='max-h-[15vh] mb-3 p-2 rounded-3 border-2 border-solid border-[#505050]' maxLength={128} />
                     <h6>Category</h6>
-                    <input id='Course_Category' value={courseCategory} onChange={e => { setCourseCategory(e.target.value) }} required placeholder='Type Category' className='mb-3 p-2 rounded-3 border-2 border-solid border-[#505050]' maxLength={32} />
+                    <input id='Course_Category' value={courseCategory} onChange={e => { setCourseCategory(e.target.value) }} required placeholder='Type Category' className='mb-3 p-2 rounded-3 border-2 border-solid border-[#505050]' maxLength={16} />
                     <button onClick={() => { PublishCourse() }} className='btn btn-success'>Publish Course</button>
                 </div>
                 <div className='w-full d-flex flex-col mr-3'>
                     <h4 className='mb-0'>Steps</h4>
                     <div className='d-flex flex-col md:flex-row md:items-center gap-x-3 mb-2'>
                         <h6 className='m-0 p-0'>Type content token to import</h6>
-                        <Link href={"/dashboard/courses/contents"} className='d-flex gap-x-1' target='_blank'>(Available Contents <ExternalLinkIcon />)</Link>
+                        <Link href={"/dashboard/courses/contents"} className='d-flex gap-x-1' target='_blank'>( Available Contents <ExternalLinkIcon />)</Link>
                     </div>
                     <div className='d-flex items-center gap-x-2'>
                         <input id='Course_Imports' required value={searchEntry} onChange={e => { setSearchEntry(e.target.value) }} placeholder='Type Content Token' className='w-100 p-2 rounded-3 border-2 border-solid border-[#505050]' maxLength={64} />
