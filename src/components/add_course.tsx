@@ -23,7 +23,7 @@ export default function Add_Course({ token = "" }) {
     const [courseCategory, setCourseCategory] = useState("")
 
     const [inEditLoading, setInEditLoading] = useState(false)
-    const [importingContents, setImportingContents] = useState(false)
+    
     useEffect(() => {
         const f = async () => {
             setInEditLoading(true);
@@ -166,6 +166,26 @@ export default function Add_Course({ token = "" }) {
         })
     }
 
+    const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+    const [dropdownOpenIndex, setDropdownOpenIndex] = useState<number | null>(null);
+
+    const handleDragStart = (index: number) => {
+        setDraggedIndex(index);
+    };
+
+    const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+    };
+
+    const handleDrop = (index: number) => {
+        if (draggedIndex === null) return;
+        const updatedContent = [...contentImports];
+        const [movedItem] = updatedContent.splice(draggedIndex, 1);
+        updatedContent.splice(index, 0, movedItem);
+        setContentImports(updatedContent);
+        setDraggedIndex(null);
+    };
+
     return (
         <div className='d-flex flex-col gap-y-4'>
             {inEditLoading && (<div className='bg-[#252525] rounded-3 p-2 m-3 animate-pulse text-3xl'>Fetching content data ...</div>)}
@@ -200,8 +220,12 @@ export default function Add_Course({ token = "" }) {
                             </div>
                         )}
                         {contentImports.map((e, i) => (
-                            <div key={i}>
-                                <div className="cursor-default d-flex flex-column p-2 rounded-3 border-2 border-solid border-[#303030] bg-[#202020] h-100">
+                            <div key={i}
+                                draggable
+                                onDragStart={() => handleDragStart(i)}
+                                onDragOver={handleDragOver}
+                                onDrop={() => handleDrop(i)}>
+                                <div className="cursor-grab active:cursor-grabbing d-flex flex-column p-2 rounded-3 border-2 border-solid border-[#303030] bg-[#202020] h-100">
                                     <div className='d-flex gap-x-3 justify-between'>
                                         <h5><u>{e.title}</u></h5>
                                         <CircleXIcon onClick={() => { DeleteItem(i) }} className='text-danger cursor-grab active:cursor-grabbing' />

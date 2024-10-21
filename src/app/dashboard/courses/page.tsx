@@ -38,6 +38,7 @@ export default function courses() {
         setCourses(rc)
         setPageNumber(pageNumber + (timeOrder == "asc" ? -1 : 1))
       } else {
+        setPageNumber(0)
         setIsEmpty(true);
         setIsLoading(false);
       }
