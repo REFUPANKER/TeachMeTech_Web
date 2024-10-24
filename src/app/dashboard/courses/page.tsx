@@ -121,7 +121,7 @@ export default function courses() {
                   <AccordionContent>
                     <div>
                       {e.contents.map((x: any, y: any) => (
-                        <div className='d-flex items-center gap-x-2'>
+                        <div key={y} className='d-flex items-center gap-x-2'>
                           <ChevronRightIcon />
                           <Link href={`/dashboard/courses/contents/edit/${x}`} target='_blank' key={y}>{x}</Link>
                         </div>

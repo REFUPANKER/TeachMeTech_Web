@@ -190,7 +190,7 @@ export default function page() {
                   <Trash2Icon className='text-danger cursor-grab active:cursor-grabbing ' />
                 </div>
                 {DateConverter(e.date)}
-                {e.link && (<a href={`${e.link}`} className='d-flex items-center gap-x-2'>Link <SquareArrowOutUpRight /></a>)}
+                {e.link && (<a href={`${e.link}`} className='d-flex items-center gap-x-2' target='_blank'>Link <SquareArrowOutUpRight /></a>)}
               </mark>
             </div>
           ))}

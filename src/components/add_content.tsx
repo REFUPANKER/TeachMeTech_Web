@@ -85,6 +85,12 @@ export default function Add_Content({ token = "" }) {
                     { type: "paragraph", text: "New Paragraph" }
                 ]);
                 break;
+            case "link":
+                setContent(prev => [
+                    ...prev,
+                    { type: "link", target: "#", text: "New Link" }
+                ]);
+                break;
         }
     }
 
@@ -125,6 +131,9 @@ export default function Add_Content({ token = "" }) {
             )
             case "paragraph": return (
                 <p className='text-l'>{item.text}</p>
+            )
+            case "link": return (
+                <a title={`Goes to : ${item.target}`} className='text-[#37A4ED] text-xl'>{item.text}</a>
             )
         }
     }
@@ -284,6 +293,10 @@ export default function Add_Content({ token = "" }) {
                             <i className="fa-solid fa-paragraph"></i>
                             Paragraph
                         </Button>
+                        <Button onClick={() => { AddItem("link") }} variant="ghost" className='w-100 lg:w-auto lg:justify-start d-flex gap-x-3 text-l lg:text-2xl items-center p-1 rounded'>
+                            <i className="fa-solid fa-arrow-up-right-from-square"></i>
+                            Link
+                        </Button>
                     </div>
                     <div className='w-100 d-flex md:flex-row items-center gap-x-4 justify-center mt-2'>
                         <p className='text-center text-l m-0 p-0'>Items {content.length}/{maxItems}</p>
@@ -303,7 +316,7 @@ export default function Add_Content({ token = "" }) {
                                 type="text"
                                 value={editingData?.target || ''}
                                 onChange={(e) => setEditingData({ ...editingData, target: e.target.value })}
-                                placeholder="Video URL"
+                                placeholder="Youtube video ID"
                                 className="w-full p-2 rounded text-white"
                             />
                         )}
@@ -333,6 +346,24 @@ export default function Add_Content({ token = "" }) {
                                 placeholder="Paragraph text"
                                 className="w-full p-2 rounded text-white"
                             />
+                        )}
+                        {editingData?.type === 'link' && (
+                            <>
+                                <input
+                                    type="text"
+                                    value={editingData?.text || ''}
+                                    onChange={(e) => setEditingData({ ...editingData, text: e.target.value })}
+                                    placeholder="Link text"
+                                    className="w-full p-2 rounded text-white"
+                                />
+                                <input
+                                    type="text"
+                                    value={editingData?.target || ''}
+                                    onChange={(e) => setEditingData({ ...editingData, target: e.target.value })}
+                                    placeholder="Link target"
+                                    className="w-full p-2 rounded text-white"
+                                />
+                            </>
                         )}
                         <Button onClick={SaveEdit} className='mt-3'>Save</Button>
                     </DialogDescription>

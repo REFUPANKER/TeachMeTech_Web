@@ -1,5 +1,5 @@
-// src/firebase.js
-import { initializeApp } from "firebase/app";
+import { toZonedTime } from 'date-fns-tz';
+import { initializeApp, setLogLevel } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database"
@@ -22,10 +22,18 @@ const auth = getAuth(app);
 const rtdb = getDatabase(app);
 const storage = getStorage(app);
 
+
 export function focusTo(id: string) {
     try {
         document.getElementById(id)?.focus()
     } catch (error) { }
 }
+
+
+export function getMsInTimeZone(timeZone: string) {
+    const now = new Date();
+    const utcDate = toZonedTime(now, timeZone);
+    return utcDate.getTime();
+};
 
 export { app, db, auth, rtdb, storage };

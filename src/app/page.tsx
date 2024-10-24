@@ -81,9 +81,6 @@ export default function Home() {
                                 Blog
                             </a>
                             <a href='#' className="text-decoration-none text-white text-xl hover:font-bold" >
-                                Explore
-                            </a>
-                            <a href='#' className="text-decoration-none text-white text-xl hover:font-bold" >
                                 About
                             </a>
                             <a href='#' className="text-decoration-none text-white text-xl hover:font-bold" >

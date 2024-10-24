@@ -10,3 +10,6 @@ courses
     pagination
     add/edit courses
         add drag drop order switch to contents
+    contents
+        add type 
+            link
