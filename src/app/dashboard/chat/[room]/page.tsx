@@ -11,11 +11,12 @@ export default function Page({ params }: { params: any }) {
     const messagesRef = ref(rtdb, `/ChatRooms/${params.room}/Messages/`);
     
     useEffect(() => {
-        const currentTimestamp = Date.now();
+        const currentTimestamp = getMsInTimeZone();
+        
         const messagesQuery = query(
             messagesRef,
             orderByChild("timestamp"),
-            endAt(currentTimestamp),
+            startAt(currentTimestamp),
         );
 
         const handleValueChange = (snapshot: any) => {
@@ -59,7 +60,7 @@ export default function Page({ params }: { params: any }) {
                 set(ref(rtdb, `/ChatRooms/${params.room}/Messages/${crypto.randomUUID()}`), {
                     "token": Date.now(),
                     "sender": "asd",
-                    "timestamp": getMsInTimeZone("America/Chicago"),
+                    "timestamp": serverTimestamp(),
                     "message": "ts" + Date.now(),
                     "user": Date.now(),
                 })
@@ -72,5 +73,3 @@ export default function Page({ params }: { params: any }) {
         </div>
     );
 }
-//77455
-//09383

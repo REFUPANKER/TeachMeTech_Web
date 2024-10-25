@@ -30,7 +30,7 @@ export function focusTo(id: string) {
 }
 
 
-export function getMsInTimeZone(timeZone: string) {
+export function getMsInTimeZone(timeZone: string = "America/Chicago") {
     const now = new Date();
     const utcDate = toZonedTime(now, timeZone);
     return utcDate.getTime();
