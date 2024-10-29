@@ -22,7 +22,8 @@ export default function layout({ children }: { children: React.ReactNode }) {
                     <SelectContent className='bg-black text-white'>
                         {[1, 2, 3, 4].map((e, i) => {
                             return (
-                                <SelectItem key={i} value={`PublicChatRoom${e}`}
+                                <SelectItem key={i}
+                                    value={`PublicChatRoom${e}`}
                                     className={`${pathname === `/dashboard/chat/PublicChatRoom${e}` ? "border-l-4 border-[#08781d]" : ""}`}>
                                     Public Chat Room {e}
                                 </SelectItem>

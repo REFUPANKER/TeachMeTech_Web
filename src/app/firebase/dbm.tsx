@@ -2,7 +2,7 @@ import { toZonedTime } from 'date-fns-tz';
 import { initializeApp, setLogLevel } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { getDatabase } from "firebase/database"
+import { get, getDatabase, query, ref, serverTimestamp, set } from "firebase/database"
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -30,10 +30,11 @@ export function focusTo(id: string) {
 }
 
 
-export function getMsInTimeZone(timeZone: string = "America/Chicago") {
-    const now = new Date();
-    const utcDate = toZonedTime(now, timeZone);
-    return utcDate.getTime();
+export async function getServerTimeZone() {
+    const dbtsref = ref(rtdb, "/Metrics/timestamp");
+    await set(dbtsref, serverTimestamp());
+    const r = (await (get(query(dbtsref)))).val();
+    return r;
 };
 
 export { app, db, auth, rtdb, storage };
