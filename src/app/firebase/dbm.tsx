@@ -1,5 +1,4 @@
-import { toZonedTime } from 'date-fns-tz';
-import { initializeApp, setLogLevel } from "firebase/app";
+import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { get, getDatabase, query, ref, serverTimestamp, set } from "firebase/database"
@@ -26,7 +25,7 @@ const storage = getStorage(app);
 export function focusTo(id: string) {
     try {
         document.getElementById(id)?.focus()
-    } catch (error) { }
+    } catch { }
 }
 
 

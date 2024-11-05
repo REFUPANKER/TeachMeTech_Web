@@ -6,10 +6,10 @@ import { toast } from '@/hooks/use-toast';
 import { WhereFilterOp, collection, deleteDoc, doc, getDocs, limit, orderBy, query, where } from 'firebase/firestore'
 import { ChevronLeftIcon, ChevronRightIcon, PenBoxIcon, Trash2Icon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import ReactPlayer from 'react-player';
 
-export default function contents() {
+export default function Contents() {
 
   const router = useRouter();
   const [contents, setContents] = useState<any[]>([])
@@ -20,7 +20,7 @@ export default function contents() {
   const [dateMax, setDateMax] = useState()
   const [pageNumber, setPageNumber] = useState(-1)
 
-  async function GetContents(condition: WhereFilterOp, timestamp: any, timeOrder: any = "desc", range = 8) {
+  const GetContents = useCallback(async (condition: WhereFilterOp, timestamp: any, timeOrder: any = "desc", range = 8) => {
     setIsLoading(true);
     setIsEmpty(false);
     try {
@@ -41,9 +41,10 @@ export default function contents() {
         setIsEmpty(true);
         setIsLoading(false);
       }
-    } catch (e) { }
+    } catch { }
     setIsLoading(false);
-  }
+  }, [pageNumber]);
+
   useEffect(() => {
     const c = async () => {
       await GetContents('>=', new Date(0))
@@ -69,7 +70,7 @@ export default function contents() {
         description: "its not existing anymore",
         style: { background: "#151515", color: "white" }
       });
-    } catch (error) {
+    } catch {
       alert("Error : cant deleting content");
     }
   }

@@ -7,9 +7,9 @@ import { WhereFilterOp, collection, deleteDoc, doc, getDocs, limit, orderBy, que
 import { ChevronLeftIcon, ChevronRightIcon, Heart, PenBoxIcon, Trash2Icon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
-export default function courses() {
+export default function Courses() {
 
   const router = useRouter();
   const [Courses, setCourses] = useState<any[]>([])
@@ -20,7 +20,7 @@ export default function courses() {
   const [dateMax, setDateMax] = useState()
   const [pageNumber, setPageNumber] = useState(-1)
 
-  async function GetCourses(condition: WhereFilterOp, timestamp: any, timeOrder: any = "desc", range = 8) {
+  const GetCourses = useCallback(async (condition: WhereFilterOp, timestamp: any, timeOrder: any = "desc", range = 8) => {
     setIsLoading(true);
     setIsEmpty(false);
     try {
@@ -42,9 +42,10 @@ export default function courses() {
         setIsEmpty(true);
         setIsLoading(false);
       }
-    } catch (e) { }
+    } catch { }
     setIsLoading(false);
-  }
+  }, [pageNumber]);
+
   useEffect(() => {
     const c = async () => {
       await GetCourses('>=', new Date(0))
@@ -70,7 +71,7 @@ export default function courses() {
         description: "its not existing anymore",
         style: { background: "#151515", color: "white" }
       });
-    } catch (error) {
+    } catch {
       alert("Error : cant deleting course");
     }
   }

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import Img_Courses from "./assets/img/Courses_Example.png"
 import Img_Chat from "./assets/img/Chat_Example.png"

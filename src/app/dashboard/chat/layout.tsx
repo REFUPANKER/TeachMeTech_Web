@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react'
 
-export default function layout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const router = useRouter();
 
@@ -17,14 +17,14 @@ export default function layout({ children }: { children: React.ReactNode }) {
                 <i className="fas fa-chevron-right text-l"></i>
                 <Select onValueChange={e => { router.push(`/dashboard/chat/${e}`) }}>
                     <SelectTrigger className="w-[180px] bg-black">
-                        <SelectValue placeholder="Chat Rooms" />
+                        <SelectValue placeholder="Chat Rooms">Chat Rooms</SelectValue>
                     </SelectTrigger>
                     <SelectContent className='bg-black text-white'>
                         {[1, 2, 3, 4].map((e, i) => {
                             return (
                                 <SelectItem key={i}
                                     value={`PublicChatRoom${e}`}
-                                    className={`${pathname === `/dashboard/chat/PublicChatRoom${e}` ? "border-l-4 border-[#08781d]" : ""}`}>
+                                    className={`${pathname === `/dashboard/chat/PublicChatRoom${e}` ? "border-l-4 border-[#08781d]" : ""} cursor-grab active:cursor-grabbing`}>
                                     Public Chat Room {e}
                                 </SelectItem>
                             )

@@ -21,7 +21,7 @@ const AuthChecker = ({ successRedirect = "/" }) => {
                 const u = doc(db, "Moderators", auth.currentUser?.uid || "")
                 const gd = await getDoc(u)
                 return gd.exists()
-            } catch (error) { }
+            } catch { }
             return false
         }
         setLoading(true);
@@ -62,7 +62,7 @@ const AuthChecker = ({ successRedirect = "/" }) => {
         });
 
         return () => unsubscribe();
-    }, [router]);
+    }, [router,path,successRedirect]);
 
     return (
         loading && (

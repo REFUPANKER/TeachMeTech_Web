@@ -5,10 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { toast } from '@/hooks/use-toast';
 import {
-    onChildAdded, onChildChanged, onChildRemoved, onValue, query, ref, off, startAt, orderByChild, set, child, remove, get, serverTimestamp
+    onChildAdded, onChildChanged, onChildRemoved, onValue, query, ref, off, startAt, orderByChild, set, remove, get, serverTimestamp
 } from 'firebase/database';
-import { Check, Cross, Send } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { Send } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 export default function Page({ params }: { params: any }) {
     const [messages, setMessages] = useState<any[]>([]);
@@ -17,7 +17,13 @@ export default function Page({ params }: { params: any }) {
 
     // current timezone of server
     const [ctm, setCtm] = useState<number | null>(null);
-    const [roomState, setRoomState] = useState(true);
+    const [roomState, setRoomState] = useState(false);
+
+    const SwitchActiveState = useCallback(async (entry: boolean) => {
+        setRoomState(entry);
+        await set(ref(rtdb, `/ChatRooms/${params.room}/State`), entry);
+    }, [params.room]);
+
     useEffect(() => {
         const getCtm = async () => {
             const x = await getServerTimeZone();
@@ -82,7 +88,7 @@ export default function Page({ params }: { params: any }) {
             off(messagesQuery);
         };
 
-    }, [ctm,params.room]);
+    }, [ctm, params.room]);
 
 
     const [message, setMessage] = useState('')
@@ -113,10 +119,36 @@ export default function Page({ params }: { params: any }) {
         await remove(ref(rtdb, dbRefRoot.concat(token)))
     }
 
-    async function SwitchActiveState(entry: boolean) {
-        setRoomState(entry);
-        await set(ref(rtdb, `/ChatRooms/${params.room}/State`), entry);
-    }
+    const nameColors = useRef(new Map());
+
+    const getRandomHexColor = (token: string) => {
+        if (nameColors.current.has(token)) {
+            return nameColors.current.get(token);
+        }
+        const min = 100;
+        const max = 200;
+        let r = 100, g = 100, b = 100;
+        switch (Math.floor(Math.random() * 3)) {
+            case 0:
+                r = Math.floor(Math.random() * (max - min) + min);
+                g = Math.floor(Math.random() * (min + max - r) + min);
+                b = Math.floor(Math.random() * (min + max - r) + min);
+                break;
+            case 1:
+                g = Math.floor(Math.random() * (max - min) + min);
+                r = Math.floor(Math.random() * (min + max - g) + min);
+                b = Math.floor(Math.random() * (min + max - g) + min);
+                break;
+            case 2:
+                b = Math.floor(Math.random() * (max - min) + min);
+                r = Math.floor(Math.random() * (min + max - b) + min);
+                g = Math.floor(Math.random() * (min + max - b) + min);
+                break;
+        }
+        const color = `rgb(${r},${g},${b})`;
+        nameColors.current.set(token, color);
+        return color;
+    };
 
     return (
         <div className='d-flex flex-col'>
@@ -148,17 +180,16 @@ export default function Page({ params }: { params: any }) {
                 </form>
             </div>
             <div className='h-[70vh] overflow-auto d-flex flex-column gap-y-2'>
-                {messages.length <= 0 && (
-                    <>
-                        No messages
-                    </>
-                )}
+                {messages.length <= 0 && (<>No messages</>)}
                 {messages.map((msg, index) => (
                     <div key={index}>
                         <div className='d-flex items-start gap-x-2'>
-                            <i onClick={e => { RemoveMessage(msg.token) }} className='fas fa-trash text-danger cursor-pointer p-3 text-xl rounded-3 hover:bg-[#252525] active:bg-[#151515]'></i>
+                            <i onClick={() => { RemoveMessage(msg.token) }} className='fas fa-trash text-danger cursor-pointer p-3 text-xl rounded-3 hover:bg-[#252525] active:bg-[#151515]'></i>
                             <div>
-                                <h5 className='d-flex gap-x-2 items-center'><u>{msg.sender}</u><i className='text-[#707070] text-xs'>{msg.user}</i></h5>
+                                <h5 className='d-flex gap-x-2 items-center'>
+                                    <u style={{ color: getRandomHexColor(msg.sender) }}>{msg.sender}</u>
+                                    <i className='text-[#707070] text-xs'>{msg.user}</i>
+                                </h5>
                                 <h6>{msg.message}</h6>
                             </div>
                         </div>

@@ -25,7 +25,6 @@ import { getDownloadURL, ref } from "firebase/storage"
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true)
-    const [selectedItem, setSelectedItem] = useState("Dashboard")
     const [isMobile, setIsMobile] = useState(false)
 
 
@@ -37,8 +36,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const sidebarItems = [
         { name: "Dashboard", icon: Home, path: "/dashboard" },
         { name: "Courses", icon: BookOpen, path: "/dashboard/courses" },
-        { name: "Users", icon: Users, path: "/dashboard/users" },
         { name: "Chat", icon: MessageSquareText, path: "/dashboard/chat" },
+        { name: "Users", icon: Users, path: "/dashboard/users" },
         { name: "Management", icon: Settings, path: "/dashboard/management" },
     ]
 
@@ -60,9 +59,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         let pfp = "";
                         try {
                             pfp = await getDownloadURL(ref(storage, `ProfilePhotos/${user.uid}`));
-                        } catch (error) { }
+                        } catch { }
                         setUserData({ ...userData, pfp: pfp });
-                    } catch (error) { }
+                    } catch { }
                     setLoadingState(false);
                 };
                 getUserData();
@@ -78,7 +77,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
 
     useEffect(() => {
-
         const checkScreenSize = () => {
             setIsMobile(window.innerWidth < 768)
             if (window.innerWidth >= 768) {
@@ -92,7 +90,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         window.addEventListener('resize', checkScreenSize)
 
         return () => window.removeEventListener('resize', checkScreenSize)
-    }, [])
+    },[])
 
     return (
         <div className="flex min-h-screen bg-black text-white">
@@ -165,7 +163,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                                 pathname === item.path && "font-bold bg-[#050505]"
                                             )}
                                             onClick={() => {
-                                                setSelectedItem(item.name)
                                                 if (isMobile) {
                                                     setIsSidebarOpen(false)
                                                 }

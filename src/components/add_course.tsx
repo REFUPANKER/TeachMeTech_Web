@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import Link from 'next/link'
 import { CircleXIcon, ExternalLinkIcon } from 'lucide-react'
@@ -23,42 +23,8 @@ export default function Add_Course({ token = "" }) {
     const [courseCategory, setCourseCategory] = useState("")
 
     const [inEditLoading, setInEditLoading] = useState(false)
-    
-    useEffect(() => {
-        const f = async () => {
-            setInEditLoading(true);
-            let error = false;
-            try {
-                const r = await getDoc(doc(db, "Courses", token))
-                if (r && r.data()) {
-                    const d = r.data();
-                    setCourseTitle(d?.title)
-                    setCourseDescription(d?.description)
-                    setCourseCategory(d?.category)
-                    d?.contents.forEach((e: any) => {
-                        TryMakeImport(e, true);
-                    })
-                    setInEditLoading(false);
-                } else {
-                    error = true;
-                }
-            } catch (e) { error = true; }
 
-            if (error) {
-                toast({
-                    title: "Can't edit content",
-                    description: "Be sure token is right",
-                    style: { background: "#151515", color: "white", }
-                });
-                setInEditLoading(false);
-            }
-        }
-        if (token) {
-            f();
-        }
-    }, [])
-
-    async function TryMakeImport(token: any, directImport = false) {
+    const TryMakeImport = useCallback(async (token: any, directImport = false) => {
         let error = false;
         if (!directImport) {
             if (contentImports.length + 1 > maxContentCount) {
@@ -90,8 +56,8 @@ export default function Add_Course({ token = "" }) {
                         setContentImports(pre => [...pre, { "id": r.id, ...r.data() }])
                     }
                 })
-                .catch(e => { error = true })
-        } catch (e) { error = true; }
+                .catch(() => { error = true })
+        } catch { error = true; }
         if (error == true) {
             toast({
                 title: "Can't get content data",
@@ -100,7 +66,44 @@ export default function Add_Course({ token = "" }) {
             });
         }
         setImportLoading(false);
-    }
+    }, [contentImports.length,searchEntry]);
+
+
+    useEffect(() => {
+        const f = async () => {
+            setInEditLoading(true);
+            let error = false;
+            try {
+                const r = await getDoc(doc(db, "Courses", token))
+                if (r && r.data()) {
+                    const d = r.data();
+                    setCourseTitle(d?.title)
+                    setCourseDescription(d?.description)
+                    setCourseCategory(d?.category)
+                    d?.contents.forEach((e: any) => {
+                        TryMakeImport(e, true);
+                    })
+                    setInEditLoading(false);
+                } else {
+                    error = true;
+                }
+            } catch { error = true; }
+
+            if (error) {
+                toast({
+                    title: "Can't edit content",
+                    description: "Be sure token is right",
+                    style: { background: "#151515", color: "white", }
+                });
+                setInEditLoading(false);
+            }
+        }
+        if (token) {
+            f();
+        }
+    }, [token, TryMakeImport])
+
+
 
     function DeleteItem(index: number) {
         setContentImports(prev => prev.filter((_, i) => i !== index));
@@ -149,14 +152,14 @@ export default function Add_Course({ token = "" }) {
             "description": courseDescription,
             "category": courseCategory,
             "contents": importsTokens
-        }).then(r => {
+        }).then(() => {
             toast({
                 title: "Publish completed",
                 description: "Redirecting ...",
                 style: { background: "#151515", color: "white" }
             });
             router.push("/dashboard/courses")
-        }).catch(e => {
+        }).catch(() => {
             setPublishState(false);
             toast({
                 title: "Error while publishing",
@@ -167,7 +170,6 @@ export default function Add_Course({ token = "" }) {
     }
 
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-    const [dropdownOpenIndex, setDropdownOpenIndex] = useState<number | null>(null);
 
     const handleDragStart = (index: number) => {
         setDraggedIndex(index);

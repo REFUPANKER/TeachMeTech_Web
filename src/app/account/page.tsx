@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ export default function AuthPage() {
         e.preventDefault();
         try {
             await signInWithEmailAndPassword(auth, email, password)
-                .then(r => {
+                .then(() => {
                     toast({
                         title: "Checking access",
                         description: "loading ...",
@@ -32,7 +32,7 @@ export default function AuthPage() {
                     setTimeout(() => {
                         router.push("/dashboard");
                     }, 2000);
-                }).catch(e => {
+                }).catch(() => {
                     toast({
                         title: "Login failed",
                         description: "Check Email or Password",
@@ -42,7 +42,7 @@ export default function AuthPage() {
                         }
                     })
                 });
-        } catch (error) {}
+        } catch {}
     }
     return (
         <div>

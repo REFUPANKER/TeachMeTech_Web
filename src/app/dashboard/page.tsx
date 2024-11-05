@@ -1,14 +1,14 @@
 "use client";
 
 import { WhereFilterOp, collection, deleteDoc, doc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, where } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { db } from '../firebase/dbm';
 import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
-import { ChevronLeftIcon, ChevronRightIcon, Link, SquareArrowOutUpRight, Trash2Icon } from 'lucide-react';
+import { ChevronLeftIcon, ChevronRightIcon, SquareArrowOutUpRight, Trash2Icon } from 'lucide-react';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@radix-ui/react-accordion';
 
-export default function page() {
+export default function Page() {
 
   const [Announcements, setAnnouncements] = useState<any[]>([]);
   const [isAnnoncsLoading, setIsAnnoncsLoading] = useState(false);
@@ -18,7 +18,7 @@ export default function page() {
   const [dateMax, setDateMax] = useState();
   const [pageNumber, setPageNumber] = useState(-1);
 
-  async function GetAnnouncements(condition: WhereFilterOp, timestamp: any, timeOrder: any = "desc", range = 3) {
+  const GetAnnouncements = useCallback(async (condition: WhereFilterOp, timestamp: any, timeOrder: any = "desc", range = 3) => {
     setIsAnnoncsLoading(true);
     setIsAnnoncsEmpty(false);
     try {
@@ -45,9 +45,9 @@ export default function page() {
         setPageNumber(0);
         setIsAnnoncsEmpty(true);
       }
-    } catch (e) { }
+    } catch { }
     setIsAnnoncsLoading(false);
-  }
+  }, [pageNumber]);
 
   useEffect(() => {
     const fetchInitialAnnouncements = async () => {
@@ -76,7 +76,7 @@ export default function page() {
         description: "It is no longer existing",
         style: { background: "#151515", color: "white" },
       });
-    } catch (error) { }
+    } catch { }
   }
 
   function GetAnnouncementsPaginated(forNext = true) {
@@ -119,7 +119,7 @@ export default function page() {
     await setDoc(doc(db, "Announcements", crypto.randomUUID()),
       {
         ...newAnnonc
-      }).then(e => {
+      }).then(() => {
         toast({
           title: "New announcement published",
           description: "now its visible by all users",
@@ -130,7 +130,7 @@ export default function page() {
         setAnnoncsLink("");
         setAnnoncsTitle("");
         setAnnoncsPublishState(false);
-      }).catch(e => {
+      }).catch(() => {
         toast({
           title: "Publish failed",
           description: "Something went wrong",
@@ -140,9 +140,9 @@ export default function page() {
   }
 
   return (
-    <div className='h-100'>
+    <div className='h-100 w-100'>
       <h1>This is your control panel</h1>
-      <div className='d-flex flex-column h-[90%] w-50'>
+      <div className='d-flex flex-column h-[90%] md:w-[50%] w-full'>
         <div className="d-flex gap-x-4">
           <h3>Announcements</h3>
           {!isAnnoncsLoading && (

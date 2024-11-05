@@ -37,7 +37,7 @@ export default function Add_Content({ token = "" }) {
                         error = true;
                     }
                 })
-                .catch(e => { error = true; })
+                .catch(() => { error = true; })
             if (error) {
                 toast({
                     title: "Can't edit content",
@@ -50,7 +50,7 @@ export default function Add_Content({ token = "" }) {
         if (token) {
             f();
         }
-    }, [])
+    }, [token])
 
 
 
@@ -210,7 +210,7 @@ export default function Add_Content({ token = "" }) {
                 "title": contentTitle,
                 "time": serverTimestamp()
             })
-            .then(r => {
+            .then(() => {
                 toast({
                     title: "Content Published",
                     description: "You can now use for courses",
@@ -220,7 +220,7 @@ export default function Add_Content({ token = "" }) {
                     }
                 });
                 router.push("/dashboard/courses/contents")
-            }).catch(e => {
+            }).catch(() => {
                 setPostState(false)
             })
     }
