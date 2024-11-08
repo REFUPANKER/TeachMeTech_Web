@@ -101,7 +101,7 @@ export default function Add_Course({ token = "" }) {
         if (token) {
             f();
         }
-    }, [token, TryMakeImport])
+    }, [token])
 
 
 

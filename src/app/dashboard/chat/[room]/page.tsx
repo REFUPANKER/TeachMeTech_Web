@@ -8,9 +8,21 @@ import {
     onChildAdded, onChildChanged, onChildRemoved, onValue, query, ref, off, startAt, orderByChild, set, remove, get, serverTimestamp
 } from 'firebase/database';
 import { Send } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 export default function Page({ params }: { params: any }) {
+    const router = useRouter();
+    const [canConnect, setCanConnect] = useState(true);
+    useEffect(() => {
+        if (!["PublicChatRoom1", "PublicChatRoom2", "PublicChatRoom3", "PublicChatRoom4"].includes(params.room)) {
+            setCanConnect(false);
+            setTimeout(() => {
+                router.push("/dashboard/chat/")
+            }, 3000);
+        }
+    }, []);
+
     const [messages, setMessages] = useState<any[]>([]);
     const dbRefRoot = `/ChatRooms/${params.room}/Messages/`;
     const messagesRef = ref(rtdb, dbRefRoot);
@@ -150,7 +162,7 @@ export default function Page({ params }: { params: any }) {
         return color;
     };
 
-    return (
+    return canConnect == true ? (
         <div className='d-flex flex-col'>
             <div className='d-flex gap-x-2'>
                 <h3>{params.room}</h3>
@@ -196,6 +208,11 @@ export default function Page({ params }: { params: any }) {
                     </div>
                 ))}
             </div>
+        </div>
+    ) : (
+        <div className='h-full w-full dark'>
+            <h1>Room Token Not valid</h1>
+            <h3>Redirecting ...</h3>
         </div>
     );
 }

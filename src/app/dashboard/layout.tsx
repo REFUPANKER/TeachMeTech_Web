@@ -22,6 +22,9 @@ import Link from "next/link"
 import AuthChecker from "@/components/auth_checker"
 import { doc, getDoc } from "firebase/firestore"
 import { getDownloadURL, ref } from "firebase/storage"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import UserProfile from "@/components/user_profile"
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true)
@@ -32,6 +35,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const [userData, setUserData] = useState(Object)
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen)
+
+    const [profileShown, setProfileShown] = useState(false);
 
     const sidebarItems = [
         { name: "Dashboard", icon: Home, path: "/dashboard" },
@@ -90,7 +95,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         window.addEventListener('resize', checkScreenSize)
 
         return () => window.removeEventListener('resize', checkScreenSize)
-    },[])
+    }, [])
 
     return (
         <div className="flex min-h-screen bg-black text-white">
@@ -141,10 +146,28 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         )}
 
                         <div className="mt-4 flex justify-center items-center space-x-2">
-                            <Button variant="ghost" >
-                                <CircleUser className="mr-2 h-4 w-4" />
-                                Profile
-                            </Button>
+                            <Dialog open={profileShown} onOpenChange={()=>{setProfileShown(!profileShown)}}>
+                                <DialogTrigger asChild>
+                                    <Button variant="ghost" onClick={() => { setProfileShown(!profileShown) }}>
+                                        <CircleUser className="mr-2 h-4 w-4" />
+                                        Profile
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-[425px] dark">
+                                    <DialogHeader>
+                                        <DialogTitle>Edit profile</DialogTitle>
+                                        <DialogDescription>
+                                            Make changes to your profile here.<br></br> Click save when you are done.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="flex flex-col h-full p-3">
+                                        {profileShown && <UserProfile token={`${auth.currentUser?.uid}`} />}
+                                    </div>
+                                    <DialogFooter>
+                                        <Button type="submit">Save changes</Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
                             <Button variant="ghost" className="text-red-500" onClick={Logout}>
                                 <LogOut className="mr-2 h-4 w-4" />
                                 Log out
