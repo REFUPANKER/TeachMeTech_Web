@@ -68,7 +68,7 @@ export default function UserProfile({ token }: { token: string }) {
                             </div>
                         </div>
                     </>) : (<>
-                        <h1>Can't get user data</h1>
+                        <h1>Cant get user data</h1>
                     </>)}
                 </>)}
         </div>
