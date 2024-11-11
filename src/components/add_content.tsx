@@ -332,7 +332,7 @@ export default function Add_Content({ token = "" }) {
                                 <input
                                     type="number"
                                     value={editingData?.size || ''}
-                                    onChange={(e) => setEditingData({ ...editingData, size: e.target.value })}
+                                    onChange={(e) => setEditingData({ ...editingData, size: Number(e.target.value) })}
                                     placeholder="Title size"
                                     className="w-full p-2 rounded text-white"
                                     min={10} max={40}

@@ -113,7 +113,7 @@ export default function Home() {
                                 <h3 style={{ borderLeft: '0.5rem solid rgb(21,255,72)', paddingLeft: '1rem' }}>Download the app</h3>
                                 <a
                                     className="d-flex align-items-center mt-3"
-                                    href="https://play.google.com/store/games?hl=tr&amp;pli=1"
+                                    href="https://github.com/REFUPANKER/TeachMeTech/releases/download/Education/TeachMeTech.apk"
                                     style={{
                                         columnCount: 3,
                                         width: 'fit-content',

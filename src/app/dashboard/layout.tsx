@@ -153,19 +153,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                         Profile
                                     </Button>
                                 </DialogTrigger>
-                                <DialogContent className="sm:max-w-[425px] dark">
+                                <DialogContent className="w-[90%] bg-[#151515] text-white">
                                     <DialogHeader>
-                                        <DialogTitle>Edit profile</DialogTitle>
+                                        <DialogTitle>Profile</DialogTitle>
                                         <DialogDescription>
-                                            Make changes to your profile here.<br></br> Click save when you are done.
+                                            This is your public profile
                                         </DialogDescription>
                                     </DialogHeader>
-                                    <div className="flex flex-col h-full p-3">
+                                    <div className="flex flex-col h-full">
                                         {profileShown && <UserProfile token={`${auth.currentUser?.uid}`} />}
                                     </div>
-                                    <DialogFooter>
-                                        <Button type="submit">Save changes</Button>
-                                    </DialogFooter>
                                 </DialogContent>
                             </Dialog>
                             <Button variant="ghost" className="text-red-500" onClick={Logout}>

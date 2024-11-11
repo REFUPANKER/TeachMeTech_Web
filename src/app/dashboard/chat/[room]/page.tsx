@@ -1,13 +1,15 @@
 "use client";
 import { auth, focusTo, getServerTimeZone, rtdb } from '@/app/firebase/dbm';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
+import UserProfile from '@/components/user_profile';
 import { toast } from '@/hooks/use-toast';
 import {
     onChildAdded, onChildChanged, onChildRemoved, onValue, query, ref, off, startAt, orderByChild, set, remove, get, serverTimestamp
 } from 'firebase/database';
-import { Send } from 'lucide-react';
+import { CircleUser, Send } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -162,6 +164,13 @@ export default function Page({ params }: { params: any }) {
         return color;
     };
 
+    const [profileShown, setProfileShown] = useState(false);
+    const [msgSender, setMsgSender] = useState("");
+    function ShowUserProfile(token: string) {
+        setMsgSender(token);
+        setProfileShown(!profileShown);
+    }
+
     return canConnect == true ? (
         <div className='d-flex flex-col'>
             <div className='d-flex gap-x-2'>
@@ -199,7 +208,9 @@ export default function Page({ params }: { params: any }) {
                             <i onClick={() => { RemoveMessage(msg.token) }} className='fas fa-trash text-danger cursor-pointer p-3 text-xl rounded-3 hover:bg-[#252525] active:bg-[#151515]'></i>
                             <div>
                                 <h5 className='d-flex gap-x-2 items-center'>
-                                    <u style={{ color: getRandomHexColor(msg.sender) }}>{msg.sender}</u>
+                                    <u style={{ color: getRandomHexColor(msg.sender) }}
+                                        className='cursor-pointer' title='Show Profile'
+                                        onClick={() => { ShowUserProfile(msg.sender) }}>{msg.sender}</u>
                                     <i className='text-[#707070] text-xs'>{msg.user}</i>
                                 </h5>
                                 <h6>{msg.message}</h6>
@@ -208,6 +219,19 @@ export default function Page({ params }: { params: any }) {
                     </div>
                 ))}
             </div>
+            <Dialog open={profileShown} onOpenChange={() => { setProfileShown(!profileShown) }}>
+                <DialogContent className="w-[90%] bg-[#151515] text-white">
+                    <DialogHeader>
+                        <DialogTitle>Profile</DialogTitle>
+                        <DialogDescription>
+                            This is your public profile
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex flex-col h-full">
+                        {profileShown && <UserProfile token={`${msgSender}`} />}
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     ) : (
         <div className='h-full w-full dark'>
