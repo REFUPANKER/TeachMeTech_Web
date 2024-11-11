@@ -8,27 +8,24 @@ import { getDownloadURL, ref } from 'firebase/storage';
 export default function UserProfile({ token }: { token: string }) {
     const [loading, setLoading] = useState(true);
     const [userdata, setUserData] = useState(Object);
+    const [pfp, setpfp] = useState("");
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const getUserData = async () => {
-                    try {
-                        const userData = (await getDoc(doc(db, "Users", user.uid))).data();
-                        let pfp = "";
-                        try {
-                            pfp = await getDownloadURL(ref(storage, `ProfilePhotos/${user.uid}`));
-                        } catch { }
-                        setUserData({ ...userData, pfp: pfp });
-                    } catch { }
-                    setLoading(false);
-                };
-                getUserData();
-            } else {
-                setUserData(null);
+        if (token) {
+            const getUserData = async () => {
+                try {
+                    const userData = (await getDoc(doc(db, "Users", token))).data();
+                    setUserData({ ...userData });
+                    await getDownloadURL(ref(storage, `ProfilePhotos/${token}`)).then(e => {
+                        setpfp(`${e}`);
+                    }).catch(() => { })
+                } catch { }
                 setLoading(false);
-            }
-        });
-        return () => unsubscribe();
+            };
+            getUserData();
+        } else {
+            setUserData(null);
+            setLoading(false);
+        }
     }, []);
     return (
         <div className="dark flex flex-col gap-[1rem]">
@@ -41,7 +38,7 @@ export default function UserProfile({ token }: { token: string }) {
                                 <div
                                     className="rounded-lg h-[20vh] aspect-square"
                                     style={{
-                                        backgroundImage: userdata.pfp ? `url(${userdata.pfp})` : 'none',
+                                        backgroundImage: pfp ? `url(${pfp})` : 'url(https://cdn-icons-png.flaticon.com/512/847/847969.png)',
                                         backgroundSize: 'cover',
                                         backgroundPosition: 'center',
                                     }}

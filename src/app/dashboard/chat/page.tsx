@@ -2,6 +2,9 @@ import React from 'react'
 
 export default function page() {
   return (
-    <div>Manage chatrooms</div>
+    <div>
+      <h1>Manage chatrooms</h1>
+      <h3>Be nice while chatting or banning users</h3>
+    </div>
   )
 }
