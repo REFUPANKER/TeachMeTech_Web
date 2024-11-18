@@ -1,7 +1,9 @@
 import React from 'react'
 
-export default function page() {
+export default function Page() {
   return (
-    <div><h1>users</h1></div>
+    <div className='flex flex-col'>
+      Manage Users (limited)
+    </div>
   )
 }
