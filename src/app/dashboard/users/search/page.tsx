@@ -1,5 +1,6 @@
 "use client";
 import { db } from '@/app/firebase/dbm';
+import BanManager from '@/components/ban_manager';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -44,8 +45,14 @@ export default function Page() {
     }
 
 
-    const [profileShown, setProfileShown] = useState(false);
     const [activeProfile, setActiveProfile] = useState("");
+
+    const [banPanelShown, setBanPanelShown] = useState(false);
+    function ShowBanPanel(token: string) {
+        setActiveProfile(token);
+        setBanPanelShown(!banPanelShown);
+    }
+    const [profileShown, setProfileShown] = useState(false);
     function ShowUserProfile(token: string) {
         setActiveProfile(token);
         setProfileShown(!profileShown);
@@ -80,6 +87,7 @@ export default function Page() {
                             {res.map((e, i) => {
                                 return (
                                     <div key={i} className='flex items-center gap-x-2 p-2 rounded-lg bg-[#202020]'>
+                                        <BanIcon onClick={() => { ShowBanPanel(e.token) }} className='text-danger cursor-grab active:cursor-grabbing' />
                                         <h5 className='flex gap-x-2 items-center'>
                                             <u className='cursor-pointer m-0 p-0' title='Show Profile'
                                                 onClick={() => { ShowUserProfile(e.token) }}>{e.name}</u>
@@ -100,17 +108,19 @@ export default function Page() {
                                 </DialogHeader>
                                 <div className="flex flex-col h-full dark gap-3">
                                     {profileShown && <UserProfile token={`${activeProfile}`} />}
-                                    {/* <div className='flex flex-col gap-2'>
-                                        <h6 className='text-danger'>Ban from app</h6>
-                                        <div className='flex flex-col gap-2 w-[50%]'>
-                                            <Input
-                                                type="datetime-local"
-                                                min={new Date().toISOString().slice(0, 16)}
-                                                defaultValue={new Date().toISOString().slice(0, 16)}
-                                            />
-                                            <Button variant={"outline"} className='flex gap-2 hover:bg-[red] active:bg-[#902020]'><BanIcon size={20} />Ban</Button>
-                                        </div>
-                                    </div> */}
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+                        <Dialog open={banPanelShown} onOpenChange={() => { setBanPanelShown(!banPanelShown) }}>
+                            <DialogContent className="w-[90%] bg-[#151515] text-white">
+                                <DialogHeader>
+                                    <DialogTitle>Manage Ban</DialogTitle>
+                                    <DialogDescription>
+                                        {activeProfile}
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="flex flex-col h-full dark gap-3">
+                                    {banPanelShown && <BanManager token={activeProfile} />}
                                 </div>
                             </DialogContent>
                         </Dialog>
